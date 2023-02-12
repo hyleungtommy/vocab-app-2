@@ -1,0 +1,18 @@
+{
+  "name": "vocab-app",
+  "version": "1.0.0",
+  "description": "\"A vocab notebook app\"",
+  "main": "index.js",
+  "author": "Tommy Leung",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "run:web": "yarn workspace vocab-frontend run dev",
+    "run:server": "yarn workspace vocab-backend run dev",
+    "build:web": "yarn workspace vocab-frontend build",
+    "build:server": "yarn workspace vocab-backend build"
+  }
+}

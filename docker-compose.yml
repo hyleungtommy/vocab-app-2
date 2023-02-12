@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  web:
+    image: hyleungtommy/vocab-web:0.0.1
+    container_name: vocab-web
+    build:
+      context: ./packages/vocab-frontend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+  server:
+    image: hyleungtommy/vocab-server:0.0.1
+    container_name: vocab-server
+    build:
+      context: /packages/vocab-backend
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
