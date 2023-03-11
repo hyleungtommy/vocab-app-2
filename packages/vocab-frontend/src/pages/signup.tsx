@@ -29,9 +29,14 @@ const Signup= ()=>{
         setErrorMsg("Username exist")
       }else{
         setErrorMsg("")
-        AxiosHelper.createUser(username,password).then(() => {
-          router.push("login")
-        });
+        try{
+          AxiosHelper.createUser(username,password).then(() => {
+            router.push("login")
+          });
+        }catch(err){
+          setErrorMsg("Server error, try later")
+        }
+        
       }
     }
   }

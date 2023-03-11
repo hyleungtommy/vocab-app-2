@@ -10,7 +10,6 @@ const LangModal = (props: NewLangModalProps) => {
 
   const getAvailableLangList = async () => {
     const _newLangList = await AxiosHelper.getAvailableLangList(props.userId);
-    console.log(_newLangList)
     const modalItemList: JSX.Element[] = [];
     if (_newLangList) {
       for (let lang of _newLangList) {

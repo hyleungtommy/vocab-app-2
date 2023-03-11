@@ -14,6 +14,7 @@ import { Languages } from "@/models/language";
 import { FlagDropDownButton } from "@/components/FlagDropdownButton";
 import  { useRouter } from "next/router";
 import ProtectedPage from '../protectedPage'
+import Link from 'next/link'
 
 const Vocab = (item: any) => {
 
@@ -30,6 +31,7 @@ const Vocab = (item: any) => {
   const [langList, setLangList] = useState<Languages[]>([]);
   const [updateView, setUpdateView] = useState<number>(0);
   const [updateLangView, setUpdateLangView] = useState<number>(0);
+  const [showQuizButton,setShowQuizButton]  = useState<boolean>(false);
   const router = useRouter();
 
   const handleClose = () => {
@@ -57,33 +59,26 @@ const Vocab = (item: any) => {
       const vocabList: Vocab[] = await AxiosHelper.getVocabListByType(userId,selectedLangCode,type);
       setVocabs(vocabList);
       setSelectedLangType(type);
-      if (vocabList.length > 20) {
-        //quizButton.current.style="display:inline-block"
-      } else {
-        //quizButton.current.style="display:none"
-      }
+      setShowQuizButton(vocabList.length >= 20)
     }
   };
 
   const getLangList = async function () {
-    //quizButton.current.style="display:none"// do not show quest button when langList is empty
     let _userId = userId;
     if(_userId == ""){
       _userId = localStorage.getItem("userId") || "";
-      console.log("_userId" + _userId)
     }
     if(_userId !== ""){
       const _langList:Languages[] = await AxiosHelper.getLangList(_userId);
-      console.log(_langList)
     setLangList(_langList);
     
     if (_langList.length > 0) {
       setSelectedLangCode(_langList[0].code)
-      //storeUserInfo(userId, _langList[0].code)
+      localStorage.setItem("selectedLang",_langList[0].code)
       if(langList.length == 0){// on first load
         const vocabList = await AxiosHelper.getVocabListByType(_userId,_langList[0].code,"");
-        console.log(vocabList)
         setVocabs(vocabList);
+        setShowQuizButton(vocabList.length >= 20)
       }
     }
     }
@@ -140,7 +135,7 @@ const Vocab = (item: any) => {
         <Container id="navbar">
           <Image src={memberLogo} className="account-icon" alt="acc" width={200} height={200} />
           <Button variant="outline-success" className="btn-logout" onClick={()=>logout()} >Logout</Button>
-          <Button id="btn-quiz" ref={quizButton} variant="info" >Quiz</Button>
+          {showQuizButton && <Link href="/quiz"><Button id="btn-quiz" ref={quizButton} variant="info" >Quiz</Button></Link>}
           {
             (langList.length == 0 ?
               <button
