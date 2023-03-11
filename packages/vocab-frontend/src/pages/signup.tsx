@@ -6,11 +6,13 @@ import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from 'next/router';
 import * as AxiosHelper from '../helpers/AxiosHelper';
+import * as S3Helper from '../helpers/S3Helper';
 
 const Signup= ()=>{
   const [username, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [uploadPhoto,setUploadPhoto] = useState<File | null>(null);
   const [errorMsg,setErrorMsg]= useState<string>('');
   const router = useRouter();
 
@@ -30,6 +32,13 @@ const Signup= ()=>{
       }else{
         setErrorMsg("")
         try{
+          if (uploadPhoto) {
+            try {
+              await S3Helper.uploadUserIcon(username,uploadPhoto)
+            } catch (error) {
+              console.log('Error uploading image:', error);
+            }
+          }
           AxiosHelper.createUser(username,password).then(() => {
             router.push("login")
           });
@@ -40,6 +49,12 @@ const Signup= ()=>{
       }
     }
   }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setUploadPhoto(event.target.files[0]);
+    }
+  };
 
   return(
   <>
@@ -58,6 +73,11 @@ const Signup= ()=>{
             <br/>
             <Form.Group controlId='formPasswordConfirm'>
               <Form.Control type='password' placeholder='Confirm password' onChange={(e)=>setConfirmPassword(e.target.value)}></Form.Control>
+            </Form.Group>
+            
+            <Form.Group controlId='uploadPhoto'>
+              <p>(optional)Upload a user photo:</p>
+              <Form.Control type='file' placeholder='(optional)Upload a user photo' onChange={handleFileChange}></Form.Control>
             </Form.Group>
             <p>{errorMsg}</p>
             <br/>

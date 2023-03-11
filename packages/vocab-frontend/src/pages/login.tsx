@@ -24,6 +24,7 @@ const Login = () => {
         if (loginResponse.token && loginResponse.token.length > 0) {
           localStorage.setItem("token", loginResponse.token);
           localStorage.setItem("userId", loginResponse.userId);
+          localStorage.setItem("username",username)
           router.push('vocab')
         }
       } catch (err) {

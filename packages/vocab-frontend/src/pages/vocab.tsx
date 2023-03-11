@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from "react";
 import {Container} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
-import memberLogo from "../images/member4.jpg";
 import VocabCard from "../components/VocabCard";
 import VocabModal from "../components/VocabModal";
 import LangModal from "../components/NewLangModal";
@@ -15,6 +14,8 @@ import { FlagDropDownButton } from "@/components/FlagDropdownButton";
 import  { useRouter } from "next/router";
 import ProtectedPage from '../protectedPage'
 import Link from 'next/link'
+import * as S3Helper from '../helpers/S3Helper';
+import defaultPhoto from '../images/member4.jpg'
 
 const Vocab = (item: any) => {
 
@@ -32,6 +33,7 @@ const Vocab = (item: any) => {
   const [updateView, setUpdateView] = useState<number>(0);
   const [updateLangView, setUpdateLangView] = useState<number>(0);
   const [showQuizButton,setShowQuizButton]  = useState<boolean>(false);
+  const [memberIcon,setMemberIcon] = useState<string>("");
   const router = useRouter();
 
   const handleClose = () => {
@@ -81,6 +83,9 @@ const Vocab = (item: any) => {
         setShowQuizButton(vocabList.length >= 20)
       }
     }
+
+    const img = await S3Helper.getUserIcon(localStorage.getItem("username") || "");
+    setMemberIcon(img || "")
     }
     
   };
@@ -133,7 +138,7 @@ const Vocab = (item: any) => {
       <ProtectedPage>
       <Container fluid>
         <Container id="navbar">
-          <Image src={memberLogo} className="account-icon" alt="acc" width={200} height={200} />
+          <Image src={(memberIcon.length > 0 ? memberIcon : defaultPhoto)} className="account-icon" alt="acc" width={200} height={200} />
           <Button variant="outline-success" className="btn-logout" onClick={()=>logout()} >Logout</Button>
           {showQuizButton && <Link href="/quiz"><Button id="btn-quiz" ref={quizButton} variant="info" >Quiz</Button></Link>}
           {
