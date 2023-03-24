@@ -98,6 +98,17 @@ const createUser = async function (username:string,password:string): Promise<voi
       await axios.post(url + "/users", body, { headers: headers })
 }
 
+const uploadUserIcon = async function(username:string, uploadPhoto:File): Promise<void>{
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('file', uploadPhoto);
+    await axios.post(url + "/users/photo", formData, { headers: {'Content-Type': 'multipart/form-data', "Access-Control-Allow-Origin": "*" }})
+}
+
+const getUserIcon = async function(username:string): Promise<string>{
+    const resp = await axios.get(url + `/users/${username}/photo`, { headers: {'Content-Type': 'text/plain'} })
+    return resp.data
+}
 export {
     getVocabList,
     getLangList,
@@ -109,5 +120,7 @@ export {
     deleteVocab,
     login,
     isUsernameExists,
-    createUser
+    createUser,
+    uploadUserIcon,
+    getUserIcon
 };

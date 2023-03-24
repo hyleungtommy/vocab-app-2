@@ -14,7 +14,6 @@ import { FlagDropDownButton } from "@/components/FlagDropdownButton";
 import  { useRouter } from "next/router";
 import ProtectedPage from '../protectedPage'
 import Link from 'next/link'
-import * as S3Helper from '../helpers/S3Helper';
 import defaultPhoto from '../images/member4.jpg'
 
 const Vocab = (item: any) => {
@@ -84,7 +83,8 @@ const Vocab = (item: any) => {
       }
     }
 
-    const img = await S3Helper.getUserIcon(localStorage.getItem("username") || "");
+    const img = await AxiosHelper.getUserIcon(localStorage.getItem("username") || "");
+    console.log(img)
     setMemberIcon(img || "")
     }
     

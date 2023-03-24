@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { getUserIcon, uploadUserIcon } from '../helper/s3Helper';
 import {
     getUserList,
     getUserEntry,
@@ -9,6 +10,7 @@ import {
     createUser,
     getUserId
 } from '../services/userService'
+import * as multer from 'multer'
 const userRouter = express.Router();
 
 userRouter.get('/users', async (req, res) => {
@@ -134,6 +136,24 @@ userRouter.post('/users/login', async function (req, res) {
         res.json(err)
     }
 
+})
+
+userRouter.post('/users/photo', multer().single('file') , async function (req:any,res) {
+    try{
+        await uploadUserIcon(req.body.username,req.file.buffer)
+        res.status(200).json({msg:"upload file success"})
+    }catch(err){
+        res.status(500).json(err)
+    }
+})
+
+userRouter.get('/users/:id/photo', async function (req,res) {
+    try{
+        const img = await getUserIcon(req.params.id)
+        res.status(200).end(img)
+    }catch(err){
+        res.status(500).json(err)
+    }
 })
 
 export default userRouter;

@@ -1,6 +1,7 @@
 import db from '../../dbConnector';
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import * as crypto from 'crypto';
+import * as s3Helper from '../helper/s3Helper'
 
 async function getUserList(){
     var param= {
@@ -192,6 +193,14 @@ async function getUserId(username,password){
     
 }
 
+async function uploadUserIcon(username:string, uploadPhoto:File){
+    await s3Helper.uploadUserIcon(username,uploadPhoto)
+}
+
+async function getUserIcon(username:string){
+    await s3Helper.getUserIcon(username)
+}
+
 export{
     getUserList,
     getUserEntry,
@@ -200,5 +209,7 @@ export{
     getUserByName,
     addNewLang,
     createUser,
-    getUserId
+    getUserId,
+    uploadUserIcon,
+    getUserIcon
 }

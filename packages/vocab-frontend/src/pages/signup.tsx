@@ -6,7 +6,6 @@ import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from 'next/router';
 import * as AxiosHelper from '../helpers/AxiosHelper';
-import * as S3Helper from '../helpers/S3Helper';
 
 const Signup= ()=>{
   const [username, setUserName] = useState<string>("");
@@ -33,8 +32,10 @@ const Signup= ()=>{
         setErrorMsg("")
         try{
           if (uploadPhoto) {
+            
             try {
-              await S3Helper.uploadUserIcon(username,uploadPhoto)
+              //await S3Helper.uploadUserIcon(username,uploadPhoto)
+              await AxiosHelper.uploadUserIcon(username,uploadPhoto);
             } catch (error) {
               console.log('Error uploading image:', error);
             }

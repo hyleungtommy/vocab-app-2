@@ -1,10 +1,13 @@
 import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import * as dotenv from 'dotenv';
+
+dotenv.config()
 const s3 = new S3Client(
     {
-        region: "us-east-1",
+        region: process.env.REGION,
         credentials: {
-            accessKeyId: "",
-            secretAccessKey: ""
+            accessKeyId: process.env.ACCESS_KEY_ID,
+            secretAccessKey: process.env.SECRET_ACCESS_KEY
         },
     }
 );
@@ -18,7 +21,6 @@ export async function getUserIcon(username: string) {
         };
         const getObjectCommand = new GetObjectCommand(params)
         const { Body, ContentType } = await s3.send(getObjectCommand);
-        console.log(Body)
         const imgData = await Body?.transformToByteArray() || new Uint8Array();
         if (imgData) {
             var base64 = btoa(
@@ -44,5 +46,4 @@ export async function uploadUserIcon(id: string, file: any) {
     };
     const putObjectCommand = new PutObjectCommand(params);
     const result = await s3.send(putObjectCommand);
-    console.log(result)
 }
