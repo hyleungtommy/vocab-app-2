@@ -5,6 +5,7 @@ A 2.0 version of my original Vocab Notebook App project, rewritten using Typescr
 ### Tech stack
 * Typescript
 * React with NextJS
+* Redux
 * Express
 * Yarn workplace
 * Jest
