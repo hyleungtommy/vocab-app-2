@@ -6,17 +6,23 @@ import { useRouter } from 'next/router';
 import * as AxiosHelper from '../helpers/AxiosHelper'
 import Link from 'next/link'
 import { AxiosError } from 'axios';
+import { connect } from 'react-redux';
+import { RootState } from '../store/states/RootState';
+import { LoginState,LoginDispatch } from '@/store/states/LoginState';
 
-interface Props {
-    username: string;
-    password: string;
-    errorMsg: string | null;
-    setUsername: (username: string) => { type: string; payload: string; };
-    setPassword: (password: string) => { type: string; payload: string; };
-    setErrorMsg: (errorMsg: string) => { type: string; payload: string | null; };
-}
+const mapStateToProps = (state: RootState) => ({
+    username: state.login.username,
+    password: state.login.password,
+    errorMsg: state.login.errorMsg
+});
 
-const LoginComponent: React.FC<Props> = ({ username, password, errorMsg, setUsername, setPassword, setErrorMsg }) => {
+const mapDispatchToProps:LoginDispatch = {
+    setUsername: (username:string) => ({ type: 'SET_USERNAME', payload: username }),
+    setPassword: (password: string) => ({ type: 'SET_PASSWORD', payload: password }),
+    setErrorMsg: (errorMsg: string | null) => ({ type: 'SET_ERROR_MSG', payload: errorMsg })
+};
+
+const LoginComponent: React.FC<LoginState & LoginDispatch> = ({ username, password, errorMsg, setUsername, setPassword, setErrorMsg }) => {
   const router = useRouter();
   const loginWithPassword = async () => {
     if (username == "") {
@@ -75,4 +81,4 @@ const LoginComponent: React.FC<Props> = ({ username, password, errorMsg, setUser
   )
 };
 
-export default LoginComponent;
+export default connect(mapStateToProps, mapDispatchToProps)(LoginComponent);
