@@ -1,5 +1,6 @@
 export type User={
     _id:string,
     motherLang:string,
-    password:string
+    password:string,
+    tags:string[]
 }

@@ -8,7 +8,8 @@ import {
     getUserByName,
     addNewLang,
     createUser,
-    getUserId
+    getUserId,
+    replaceUserTagList
 } from '../services/userService'
 import * as multer from 'multer'
 const userRouter = express.Router();
@@ -151,6 +152,15 @@ userRouter.get('/users/:id/photo', async function (req,res) {
     try{
         const img = await getUserIcon(req.params.id)
         res.status(200).end(img)
+    }catch(err){
+        res.status(500).json(err)
+    }
+})
+
+userRouter.put('/users/:id/tags', async function (req,res) {
+    try{
+        await replaceUserTagList(req.params.id,req.body.tags)
+        res.status(200).json({msg:"upload file success"})
     }catch(err){
         res.status(500).json(err)
     }

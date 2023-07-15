@@ -3,6 +3,7 @@ import axios from "axios";
 import { Vocab } from '@/models/vocab';
 import { Languages } from '@/models/language';
 import { LoginResponse } from '@/models/LoginResponse';
+import { User } from '@/models/user';
 
 const headers = {
     "Content-Type": "application/json",
@@ -98,6 +99,11 @@ const createUser = async function (username:string,password:string): Promise<voi
       await axios.post(url + "/users", body, { headers: headers })
 }
 
+const getUserInfo = async function (userid:string):Promise<User>{
+    const {data} = await axios.get(url + `/users/${userid}`, { headers: headers })
+    return data;
+}
+
 const uploadUserIcon = async function(username:string, uploadPhoto:File): Promise<void>{
     const formData = new FormData();
     formData.append('username', username);
@@ -109,6 +115,14 @@ const getUserIcon = async function(username:string): Promise<string>{
     const resp = await axios.get(url + `/users/${username}/photo`, { headers: {'Content-Type': 'text/plain'} })
     return resp.data
 }
+
+const replaceUserTagList = async function(userid:string, tags: string[]): Promise<void>{
+    const body = {
+        tags:tags
+      };
+    await axios.put(url + `/users/${userid}/tags`, body, { headers: headers })
+}
+
 export {
     getVocabList,
     getLangList,
@@ -121,6 +135,8 @@ export {
     login,
     isUsernameExists,
     createUser,
+    getUserInfo,
     uploadUserIcon,
-    getUserIcon
+    getUserIcon,
+    replaceUserTagList
 };

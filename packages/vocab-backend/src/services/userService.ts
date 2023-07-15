@@ -149,7 +149,7 @@ async function addNewLang(id,code){
 }
 
 async function createUser(name,pw,firstLang,motherLang){
-
+    
     var param = {
         TableName: "Users",
         Item:{
@@ -157,7 +157,8 @@ async function createUser(name,pw,firstLang,motherLang){
             'username' : {S : name},
             'password' : {S : pw},
             'langList' : {L : []},
-            'motherLang' : {S : motherLang}
+            'motherLang' : {S : motherLang},
+            'tags' : {L : []}
         }
     }
     try{
@@ -201,6 +202,32 @@ async function getUserIcon(username:string){
     await s3Helper.getUserIcon(username)
 }
 
+async function replaceUserTagList(userid:string, tags: string[]){
+    var records = tags.map((tag)=>{
+        return {S:tag}
+    })
+    var param = {
+        TableName: "Users",
+        UpdateExpression: 'SET #t = :tags',
+        Key:{
+            '_id' : {S : userid}
+        },
+        ExpressionAttributeNames: {
+            '#t' : 'tags'
+        },
+        ExpressionAttributeValues: {
+            ':tags' : {L : records}
+        }
+    }
+    try{
+        const result = await db.updateItem(param)
+        return result
+    }catch(err){
+        console.log(err);
+        return undefined;
+    }
+}
+
 export{
     getUserList,
     getUserEntry,
@@ -211,5 +238,6 @@ export{
     createUser,
     getUserId,
     uploadUserIcon,
-    getUserIcon
+    getUserIcon,
+    replaceUserTagList
 }

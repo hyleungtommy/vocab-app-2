@@ -12,9 +12,11 @@ import { Vocab } from "@/models/vocab";
 import { Languages } from "@/models/language";
 import { FlagDropDownButton } from "@/components/FlagDropdownButton";
 import  { useRouter } from "next/router";
+import {User} from '@/models/user'
 import ProtectedPage from '../protectedPage'
 import Link from 'next/link'
 import defaultPhoto from '../images/member4.jpg'
+import TagModal from "../components/TagsModal";
 
 const Vocab = (item: any) => {
 
@@ -33,6 +35,8 @@ const Vocab = (item: any) => {
   const [updateLangView, setUpdateLangView] = useState<number>(0);
   const [showQuizButton,setShowQuizButton]  = useState<boolean>(false);
   const [memberIcon,setMemberIcon] = useState<string>("");
+  const [tagModalShow, setTagModalShow] = useState<boolean>(false);
+  const [user,setUser] = useState<User>();
   const router = useRouter();
 
   const handleClose = () => {
@@ -84,11 +88,16 @@ const Vocab = (item: any) => {
     }
 
     const img = await AxiosHelper.getUserIcon(localStorage.getItem("username") || "");
-    console.log(img)
     setMemberIcon(img || "")
     }
     
   };
+
+  const getUserInfo = async function(){
+    const userData: User = await AxiosHelper.getUserInfo(userId)
+    console.log(userData)
+    setUser(userData)
+  }
 
   const storeUserInfo = (userId: string, selectedLang: string) => {
     localStorage.setItem("userId", userId)
@@ -101,6 +110,14 @@ const Vocab = (item: any) => {
 
   const closeLangModal = () => {
     setLangModalShow(false);
+  }
+
+  const openTagModal = () => {
+    setTagModalShow(true);
+  }
+
+  const closeTagModal = () => {
+    setTagModalShow(false);
   }
 
   const logout = ()=>{
@@ -116,6 +133,10 @@ const Vocab = (item: any) => {
   useEffect(() => {
     getLangList();
   }, [updateLangView]);
+
+  useEffect(()=>{
+    getUserInfo()
+  },[])
 
   useEffect(()=>{
     setUserId(localStorage.getItem("userId") || "")
@@ -172,9 +193,19 @@ const Vocab = (item: any) => {
               data-bs-target="#myModal"
               onClick={openModalAsNewVocab}
             >
-              Add new
+              New Vocab
             </button>)
           }
+          &nbsp;
+          <button
+              type="button"
+              className="btn btn-primary blue"
+              data-bs-toggle="modal"
+              data-bs-target="#myModal"
+              onClick={openTagModal}
+            >
+              Tags
+          </button>
           {
             (selectedLangCode && <FilterButton onClickItem={getVocabList}></FilterButton>)
           }
@@ -199,6 +230,16 @@ const Vocab = (item: any) => {
             userId={userId}
             updateView={updateLangView}
             setUpdateView={setUpdateLangView}
+          />
+        </Container>
+        <Container fluid>
+          <TagModal
+            show={tagModalShow}
+            closeTagModal={closeTagModal}
+            userId={userId}
+            updateView={updateLangView}
+            setUpdateView={setUpdateLangView}
+            tags={user?.tags || []}
           />
         </Container>
       </Container>
