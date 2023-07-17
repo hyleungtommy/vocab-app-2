@@ -311,6 +311,16 @@ footer{
   border-color: #198754;
 }
 
+.tag{
+  background-color: rgb(51, 51, 51);
+  border-radius: 5px;
+  color: white;
+  padding: 2px 8px;
+  font-size: 0.8em;
+  height: 20px;
+  margin: 0 5px;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

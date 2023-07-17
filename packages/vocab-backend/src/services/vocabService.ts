@@ -94,9 +94,12 @@ async function addVocab(vocab){
         note:vocab.note
     }
     */
+   let tags = vocab.tags.map((t)=>{
+    return {S : t}
+   })
     var param = {
         TableName: "Vocabs",
-        UpdateExpression: 'SET #v = :vocab, #t = :type, #m = :meaning,#s = :sentence,#tr = :translation,#n = :note,#u = :updatedAt',
+        UpdateExpression: 'SET #v = :vocab, #t = :type, #m = :meaning,#s = :sentence,#tr = :translation,#n = :note,#u = :updatedAt, #tags = :tags',
         Key:{
             '_id' : {S : id}
         },
@@ -107,7 +110,8 @@ async function addVocab(vocab){
             '#s' : 'sentence',
             '#tr' : 'translation',
             '#n' : 'note',
-            '#u' : 'updatedAt'
+            '#u' : 'updatedAt',
+            '#tags' : 'tags'
         },
         ExpressionAttributeValues: {
             ':vocab' : {S : vocab.vocab},
@@ -116,7 +120,8 @@ async function addVocab(vocab){
             ':sentence' : {S : vocab.sentence},
             ':translation' : {S : vocab.translation},
             ':note' : {S : vocab.note},
-            ':updatedAt' : {N : Date.now().toString()}
+            ':updatedAt' : {N : Date.now().toString()},
+            ':tags' : {L : tags}
         }
     }
     try{

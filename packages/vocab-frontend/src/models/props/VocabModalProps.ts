@@ -6,5 +6,6 @@ export type VocabModalProps = {
     modalMode:string,
     vocab:Vocab | undefined,
     langCode:string,
-    userId:string
+    userId:string,
+    availableTags:string[]
 }

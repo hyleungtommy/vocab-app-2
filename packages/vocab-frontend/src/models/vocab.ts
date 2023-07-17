@@ -10,5 +10,6 @@ export type Vocab = {
     userId:string,
     vocab:string,
     _id:string,
-    type:string
+    type:string,
+    tags:string[]
 }

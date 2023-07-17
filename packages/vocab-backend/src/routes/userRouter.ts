@@ -160,7 +160,7 @@ userRouter.get('/users/:id/photo', async function (req,res) {
 userRouter.put('/users/:id/tags', async function (req,res) {
     try{
         await replaceUserTagList(req.params.id,req.body.tags)
-        res.status(200).json({msg:"upload file success"})
+        res.status(200).json({msg:`replaced user tag ${req.params.id}`})
     }catch(err){
         res.status(500).json(err)
     }

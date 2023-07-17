@@ -8,7 +8,7 @@ const TagModal = (props: TagsModalProps) => {
     const [newLangList, setNewLangList] = useState<JSX.Element[]>([])
     const [newTag,setNewTag] = useState<string>("")
     const [updateView, setUpdteView] = useState<number>(0)
-    const [tempList, setTempList] = useState<string[]>([])
+    const [tempList, setTempList] = useState<string[]>(props.tags)
     useEffect(()=>{
         loadTags();
     },[updateView])

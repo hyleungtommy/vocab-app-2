@@ -54,6 +54,7 @@ const addNewVocab = async function (vocab: Vocab): Promise<void> {
         note: vocab.note,
         langCode: vocab.langCode,
         userId: vocab.userId,
+        tags: vocab.tags
     };
     await axios.post(url + "/vocabs", body);
 }
@@ -67,6 +68,7 @@ const updateVocab = async function (vocab: Vocab): Promise<void> {
         sentence: vocab.sentence,
         translation: vocab.translation,
         note: vocab.note,
+        tags: vocab.tags
     };
     await axios.put(url + `/vocabs/${vocab._id}`, body, { headers: headers })
 }

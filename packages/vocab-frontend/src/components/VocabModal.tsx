@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Form, Modal } from "react-bootstrap";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as AxiosHelper from '../helpers/AxiosHelper'
 import { Vocab } from "@/models/vocab";
 import { VocabModalProps } from "@/models/props/VocabModalProps";
@@ -14,6 +14,20 @@ const VocabModal = (props:VocabModalProps) => {
   const [translation, setTranslation] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [tags,setTags] = useState<string[]>([])
+  const [updateTagListCount,setUpdateTagListCount] = useState<number>(0)
+  const [availableTags,setAvailableTags] = useState<string[]>(props.availableTags || [])
+  let tagOptions: JSX.Element[] = []
+  for(let tag of availableTags){
+    tagOptions.push(<option value={tag}>{tag}</option>)
+  } 
+  let tagSpans: JSX.Element[] = []
+    for(let tag of tags){
+      tagSpans.push(<span className='tag'>{tag}&nbsp;<a onClick={()=>deleteTag(tag)}>x</a></span>)
+    }
+
+  
+
   const loadVocabData = () => {
     if (props.vocab && props.modalMode == "Exist") {
       setId(props.vocab._id);
@@ -24,6 +38,7 @@ const VocabModal = (props:VocabModalProps) => {
       setTranslation(props.vocab.translation);
       setNotes(props.vocab.note);
       setErrorMsg("")
+      setTags(props.vocab.tags || [])
     } else {
       setName("");
       setType("N");
@@ -32,6 +47,7 @@ const VocabModal = (props:VocabModalProps) => {
       setTranslation("");
       setNotes("");
       setErrorMsg("")
+      setTags([])
     }
   };
   const addNewVocab = (langCode:string, userId:string) => {
@@ -47,7 +63,8 @@ const VocabModal = (props:VocabModalProps) => {
             createdAt:"",
             updatedAt:"",
             userId:userId,
-            _id:""
+            _id:"",
+            tags:tags
     }
     AxiosHelper.addNewVocab(vocab).then(() => {
       props.handleClose();
@@ -67,7 +84,8 @@ const VocabModal = (props:VocabModalProps) => {
             createdAt:"",
             updatedAt:"",
             userId:"",
-            _id:id
+            _id:id,
+            tags:tags
     }
     AxiosHelper.updateVocab(vocab).then(() => {
       props.handleClose();
@@ -97,6 +115,25 @@ const VocabModal = (props:VocabModalProps) => {
       updateVocab()
     }
   }
+
+  const updateTagList = ()=>{
+    console.log(updateTagList)
+  }
+
+  const deleteTag = (tag:string)=>{
+    setTags(tags.filter((t)=>{
+      return t !== tag
+    }))
+    availableTags.push(tag)
+    tagOptions = []
+    for(let tag of props.availableTags){
+      tagOptions.push(<option value={tag}>{tag}</option>)
+    }
+  }
+
+  useEffect(()=>{
+    updateTagList()
+  },[updateTagListCount])
 
   return (
     <Modal
@@ -163,6 +200,33 @@ const VocabModal = (props:VocabModalProps) => {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           ></textarea>
+          <label className="form-label">Tags:</label>
+          {
+            tagSpans
+          }
+          {
+            tagOptions.length > 0 &&
+            <select
+            name="tags"
+            id="tags"
+            className="vocab-dropdown"
+            onChange={(e) => {
+              if(e.target.value !== ""){
+                tags.push(e.target.value)
+                setAvailableTags(availableTags.filter((t)=>{
+                  return t !== e.target.value
+                }))
+                setUpdateTagListCount(updateTagListCount + 1)
+              }
+              
+              }
+            }
+          >
+            <option value="">Select a tag</option>
+            {tagOptions}
+          </select>
+          }
+
           <p>{errorMsg}</p>
         </Form>
       </Modal.Body>

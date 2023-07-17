@@ -24,13 +24,13 @@ vocabRouter.post('/vocabs',async function (req, res) {
        'userId' : {S : req.body.userId},
        'correctAnswerCount' : {N : '0'},
        'createdAt' : {N : Date.now().toString()},
-       'updatedAt': {N : Date.now().toString()}
+       'updatedAt': {N : Date.now().toString()},
+       'tags': {L: req.body.tags || []}
    }
     //console.log("body=" + JSON.stringify(req.body));
     //console.log("add-vocab-signle vocab=" + vocab.vocab + " type=" + vocab.type + " meaning=" + vocab.meaning + " sentence=" + vocab.sentence + " translation=" + vocab.translation + " note=" + vocab.note)
     if(vocab){
         var item = await addVocab(vocab);
-        console.log("inserted item=" + JSON.stringify(item));
         if(item){
            res.status(200)
            res.json(item);
@@ -76,9 +76,10 @@ vocabRouter.put('/vocabs/:id',async function(req,res){
         meaning: req.body.meaning,
         sentence:req.body.sentence,
         translation:req.body.translation,
-        note:req.body.note
+        note:req.body.note,
+        tags:req.body.tags || []
     };
-    //console.log("update-vocab-single vocab=" + JSON.stringify(req.body))
+    
     var item = await updateVocab(vocab);
     if(item){
         res.status(200)
