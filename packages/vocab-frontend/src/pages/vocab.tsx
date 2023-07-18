@@ -42,9 +42,10 @@ const Vocab = (item: any) => {
   const [user, setUser] = useState<User>();
   const router = useRouter();
 
-  const handleClose = () => {
+  const handleClose = (needRefresh:boolean) => {
     setShow(false);
-    setUpdateView(updateView + 1);
+    if(needRefresh)
+      setUpdateView(updateView + 1);
   };
   const openModalAsNewVocab = () => {
     setShow(true);

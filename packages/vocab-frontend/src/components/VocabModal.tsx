@@ -46,7 +46,7 @@ const VocabModal = (props: VocabModalProps) => {
       setErrorMsg("")
       setTags(props.vocab.tags || [])
       setAvailableTags(props.availableTags)
-      renderTagSection(props.availableTags, props.vocab.tags)
+      renderTagSection(props.availableTags, props.vocab.tags || [])
     } else {
       setName("");
       setType("N");
@@ -79,7 +79,7 @@ const VocabModal = (props: VocabModalProps) => {
       tags: tags
     }
     AxiosHelper.addNewVocab(vocab).then(() => {
-      props.handleClose();
+      props.handleClose(true);
     });
   };
 
@@ -100,13 +100,13 @@ const VocabModal = (props: VocabModalProps) => {
       tags: tags
     }
     AxiosHelper.updateVocab(vocab).then(() => {
-      props.handleClose();
+      props.handleClose(true);
     });
   };
 
   const deleteVocab = (e: any) => {
     AxiosHelper.deleteVocab(id).then(() => {
-      props.handleClose();
+      props.handleClose(true);
     });
   };
 
@@ -184,7 +184,7 @@ const VocabModal = (props: VocabModalProps) => {
   return (
     <Modal
       show={props.show}
-      onHide={() => props.handleClose()}
+      onHide={() => props.handleClose(false)}
       onEntered={loadVocabData}
     >
       <Modal.Body>
@@ -278,7 +278,7 @@ const VocabModal = (props: VocabModalProps) => {
             Delete
           </Button>)
         }
-        <Button variant="secondary" onClick={() => props.handleClose()}>
+        <Button variant="secondary" onClick={() => props.handleClose(false)}>
           Close
         </Button>
         {props.modalMode == "New" ? (
