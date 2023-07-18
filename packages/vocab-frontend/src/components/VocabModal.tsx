@@ -5,7 +5,7 @@ import * as AxiosHelper from '../helpers/AxiosHelper'
 import { Vocab } from "@/models/vocab";
 import { VocabModalProps } from "@/models/props/VocabModalProps";
 
-const VocabModal = (props:VocabModalProps) => {
+const VocabModal = (props: VocabModalProps) => {
   const [id, setId] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [type, setType] = useState<string>("");
@@ -14,19 +14,25 @@ const VocabModal = (props:VocabModalProps) => {
   const [translation, setTranslation] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
-  const [tags,setTags] = useState<string[]>([])
-  const [updateTagListCount,setUpdateTagListCount] = useState<number>(0)
-  const [availableTags,setAvailableTags] = useState<string[]>(props.availableTags || [])
-  let tagOptions: JSX.Element[] = []
+  const [tags, setTags] = useState<string[]>([])
+  const [updateTagListCount, setUpdateTagListCount] = useState<number>(0)
+  const [availableTags, setAvailableTags] = useState<string[]>([])
+  const [tagOptions, setTagOptions] = useState<JSX.Element[]>([])
+  const [tagSpans, setTagSpans] = useState<JSX.Element[]>([])
+  //let tagOptions: JSX.Element[] = []
+  /*
   for(let tag of availableTags){
     tagOptions.push(<option value={tag}>{tag}</option>)
   } 
-  let tagSpans: JSX.Element[] = []
-    for(let tag of tags){
-      tagSpans.push(<span className='tag'>{tag}&nbsp;<a onClick={()=>deleteTag(tag)}>x</a></span>)
-    }
+  */
+  // let tagSpans: JSX.Element[] = []
+  /*
+  for(let tag of tags){
+    tagSpans.push(<span className='tag'>{tag}&nbsp;<a onClick={()=>deleteTag(tag)}>x</a></span>)
+  }
+  */
 
-  
+
 
   const loadVocabData = () => {
     if (props.vocab && props.modalMode == "Exist") {
@@ -39,6 +45,8 @@ const VocabModal = (props:VocabModalProps) => {
       setNotes(props.vocab.note);
       setErrorMsg("")
       setTags(props.vocab.tags || [])
+      setAvailableTags(props.availableTags)
+      renderTagSection(props.availableTags, props.vocab.tags)
     } else {
       setName("");
       setType("N");
@@ -48,23 +56,27 @@ const VocabModal = (props:VocabModalProps) => {
       setNotes("");
       setErrorMsg("")
       setTags([])
+      setAvailableTags(props.availableTags)
+      renderTagSection(props.availableTags, [])
     }
+
+
   };
-  const addNewVocab = (langCode:string, userId:string) => {
-    const vocab:Vocab = {
+  const addNewVocab = (langCode: string, userId: string) => {
+    const vocab: Vocab = {
       vocab: name,
-            type: type,
-            meaning: meaning,
-            sentence: comment,
-            translation: translation,
-            note: notes,
-            langCode: langCode,
-            correctAnswerCount:0,
-            createdAt:"",
-            updatedAt:"",
-            userId:userId,
-            _id:"",
-            tags:tags
+      type: type,
+      meaning: meaning,
+      sentence: comment,
+      translation: translation,
+      note: notes,
+      langCode: langCode,
+      correctAnswerCount: 0,
+      createdAt: "",
+      updatedAt: "",
+      userId: userId,
+      _id: "",
+      tags: tags
     }
     AxiosHelper.addNewVocab(vocab).then(() => {
       props.handleClose();
@@ -72,73 +84,107 @@ const VocabModal = (props:VocabModalProps) => {
   };
 
   const updateVocab = () => {
-    const vocab:Vocab = {
+    const vocab: Vocab = {
       vocab: name,
-            type: type,
-            meaning: meaning,
-            sentence: comment,
-            translation: translation,
-            note: notes,
-            langCode: "",
-            correctAnswerCount:0,
-            createdAt:"",
-            updatedAt:"",
-            userId:"",
-            _id:id,
-            tags:tags
+      type: type,
+      meaning: meaning,
+      sentence: comment,
+      translation: translation,
+      note: notes,
+      langCode: "",
+      correctAnswerCount: 0,
+      createdAt: "",
+      updatedAt: "",
+      userId: "",
+      _id: id,
+      tags: tags
     }
     AxiosHelper.updateVocab(vocab).then(() => {
       props.handleClose();
     });
   };
 
-  const deleteVocab = (e:any) => {
+  const deleteVocab = (e: any) => {
     AxiosHelper.deleteVocab(id).then(() => {
       props.handleClose();
     });
   };
 
-  const validateInputForAddNew = (langCode:any, userId:any) => {
-    if(name == "" || meaning == ""){
+  const validateInputForAddNew = (langCode: any, userId: any) => {
+    if (name == "" || meaning == "") {
       setErrorMsg("Vocab and meaning cannot be empty");
-    }else{
+    } else {
       setErrorMsg("")
       addNewVocab(langCode, userId)
     }
   }
 
-  const validateInputForUpdate = ()=>{
-    if(name == "" || meaning == ""){
+  const validateInputForUpdate = () => {
+    if (name == "" || meaning == "") {
       setErrorMsg("Vocab and meaning cannot be empty");
-    }else{
+    } else {
       setErrorMsg("")
       updateVocab()
     }
   }
 
-  const updateTagList = ()=>{
+  const updateTagList = () => {
     console.log(updateTagList)
   }
 
-  const deleteTag = (tag:string)=>{
-    setTags(tags.filter((t)=>{
+  const deleteTag = (tag: string) => {
+    let localTag = tags.filter((t) => {
       return t !== tag
-    }))
+    })
+    setTags(localTag)
     availableTags.push(tag)
-    tagOptions = []
-    for(let tag of props.availableTags){
-      tagOptions.push(<option value={tag}>{tag}</option>)
+    renderTagSection(availableTags, localTag)
+  }
+
+  const addTag = (newTag: string) => {
+    if (newTag.length > 0) {
+      tags.push(newTag)
+      let localAvailableTags = availableTags.filter((t) => {
+        return t !== newTag
+      })
+      setAvailableTags(localAvailableTags)
+      renderTagSection(localAvailableTags, tags)
     }
   }
 
-  useEffect(()=>{
+  const renderTagSection = (localAvailableTags: string[], localTags: string[]) => {
+    let localTagOptions = []
+    if (localTags.length > 0) {// only display un-added tags
+      for (let tag of localAvailableTags) {
+        if (localTags.findIndex((t) => {
+          return t === tag
+        }) === -1) {
+          localTagOptions.push(<option value={tag}>{tag}</option>)
+        }
+      }
+    } else {
+      for (let tag of props.availableTags) {
+        localTagOptions.push(<option value={tag}>{tag}</option>)
+      }
+    }
+    setTagOptions(localTagOptions)
+
+    let localTagSpans = []
+    for (let tag of localTags) {
+      localTagSpans.push(<span className='tag'>{tag}&nbsp;<a onClick={() => deleteTag(tag)}>x</a></span>)
+    }
+
+    setTagSpans(localTagSpans)
+  }
+
+  useEffect(() => {
     updateTagList()
-  },[updateTagListCount])
+  }, [updateTagListCount])
 
   return (
     <Modal
       show={props.show}
-      onHide={()=>props.handleClose()}
+      onHide={() => props.handleClose()}
       onEntered={loadVocabData}
     >
       <Modal.Body>
@@ -207,24 +253,14 @@ const VocabModal = (props:VocabModalProps) => {
           {
             tagOptions.length > 0 &&
             <select
-            name="tags"
-            id="tags"
-            className="vocab-dropdown"
-            onChange={(e) => {
-              if(e.target.value !== ""){
-                tags.push(e.target.value)
-                setAvailableTags(availableTags.filter((t)=>{
-                  return t !== e.target.value
-                }))
-                setUpdateTagListCount(updateTagListCount + 1)
-              }
-              
-              }
-            }
-          >
-            <option value="">Select a tag</option>
-            {tagOptions}
-          </select>
+              name="tags"
+              id="tags"
+              className="vocab-dropdown"
+              onChange={(e) => { addTag(e.target.value) }}
+            >
+              <option value="">Select a tag</option>
+              {tagOptions}
+            </select>
           }
 
           <p>{errorMsg}</p>
@@ -234,15 +270,15 @@ const VocabModal = (props:VocabModalProps) => {
         {
           props.modalMode == "New" ? (
             <></>
-            ) : (<Button
-              className="vocab-delete me-auto"
-              variant="outline-secondary"
-              onClick={deleteVocab}
-            >
-              Delete
-            </Button>)
+          ) : (<Button
+            className="vocab-delete me-auto"
+            variant="outline-secondary"
+            onClick={deleteVocab}
+          >
+            Delete
+          </Button>)
         }
-        <Button variant="secondary" onClick={()=>props.handleClose()}>
+        <Button variant="secondary" onClick={() => props.handleClose()}>
           Close
         </Button>
         {props.modalMode == "New" ? (

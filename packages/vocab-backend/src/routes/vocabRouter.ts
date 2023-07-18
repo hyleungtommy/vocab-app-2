@@ -12,6 +12,9 @@ import {
 const vocabRouter = express.Router();
 
 vocabRouter.post('/vocabs',async function (req, res) {
+    let tags = req.body.tags.map((t)=>{
+        return {S : t}
+    })
    var vocab = {
        '_id' : {S : crypto.randomBytes(16).toString("hex")},
        'vocab' : {S : req.body.vocab},
@@ -25,7 +28,7 @@ vocabRouter.post('/vocabs',async function (req, res) {
        'correctAnswerCount' : {N : '0'},
        'createdAt' : {N : Date.now().toString()},
        'updatedAt': {N : Date.now().toString()},
-       'tags': {L: req.body.tags || []}
+       'tags': {L: tags || []}
    }
     //console.log("body=" + JSON.stringify(req.body));
     //console.log("add-vocab-signle vocab=" + vocab.vocab + " type=" + vocab.type + " meaning=" + vocab.meaning + " sentence=" + vocab.sentence + " translation=" + vocab.translation + " note=" + vocab.note)

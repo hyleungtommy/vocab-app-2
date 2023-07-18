@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import * as AxiosHelper from '@/helpers/AxiosHelper';
 import { TagsModalProps } from "@/models/props/TagsModelProps";
 
-const TagModal = (props: TagsModalProps) => {
+const TagFilterModal = (props: TagsModalProps) => {
     const [newLangList, setNewLangList] = useState<JSX.Element[]>([])
     const [newTag, setNewTag] = useState<string>("")
     const [updateView, setUpdteView] = useState<number>(0)
@@ -23,13 +23,7 @@ const TagModal = (props: TagsModalProps) => {
                     <p>
                         {tempList[idx]}
                         &nbsp;
-                    <button
-                        type="button"
-                        className="btn btn-primary blue display-inline"
-                        onClick={(e) => removeTag(i)}
-                    >
-                        Remove
-                    </button>
+                        <input type="checkbox"></input>
                     </p>
                    
                 </>
@@ -56,22 +50,15 @@ const TagModal = (props: TagsModalProps) => {
             show={props.show}
             onHide={() => {
                 props.closeTagModal()
-                AxiosHelper.replaceUserTagList(props.userId, tempList);
             }
             }
             onEntered={() => loadTags()}>
-            <Modal.Header>Manage your tags</Modal.Header>
+            <Modal.Header>Only show these tags : </Modal.Header>
             <Modal.Body>
                 {newLangList}
 
             </Modal.Body>
             <Modal.Footer>
-                <input type="text" value={newTag}
-                    onChange={(e) => {
-                        setNewTag(e.target.value)
-                    }
-                    }>
-                </input>
                 <button
                     type="button"
                     className="btn btn-primary blue"
@@ -81,7 +68,7 @@ const TagModal = (props: TagsModalProps) => {
                     }
                     }
                 >
-                    Add New Tag
+                    Select All
                 </button>
             </Modal.Footer>
         </Modal>
@@ -90,4 +77,4 @@ const TagModal = (props: TagsModalProps) => {
 
 };
 
-export default TagModal
+export default TagFilterModal

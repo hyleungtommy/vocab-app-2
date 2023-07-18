@@ -10,6 +10,7 @@ export const FilterButton = (props: FilterButtonProps) => {
             <Dropdown.Item className="dropdown-item" href="#" onClick={()=>props.onClickItem("ADV")}>Adverb</Dropdown.Item>
             <Dropdown.Item className="dropdown-item" href="#" onClick={()=>props.onClickItem("P")}>Pharse</Dropdown.Item>
             <Dropdown.Item className="dropdown-item" href="#" onClick={()=>props.onClickItem("")}>All</Dropdown.Item>
+            <Dropdown.Item className="dropdown-item" href="#" onClick={()=>props.OpenTagFilterModal()}>By Tags...</Dropdown.Item>
         </DropdownButton>
     );
 }

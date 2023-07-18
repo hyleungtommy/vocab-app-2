@@ -17,6 +17,7 @@ import ProtectedPage from '../protectedPage'
 import Link from 'next/link'
 import defaultPhoto from '../images/member4.jpg'
 import TagModal from "../components/TagsModal";
+import TagFilterModal from "@/components/TagFilterModal";
 
 const Vocab = (item: any) => {
 
@@ -36,6 +37,7 @@ const Vocab = (item: any) => {
   const [showQuizButton, setShowQuizButton] = useState<boolean>(false);
   const [memberIcon, setMemberIcon] = useState<string>("");
   const [tagModalShow, setTagModalShow] = useState<boolean>(false);
+  const [tagFilterModalShow, setTagFilterModalShow] = useState<boolean>(false);
   const [user, setUser] = useState<User>();
   const router = useRouter();
 
@@ -67,6 +69,10 @@ const Vocab = (item: any) => {
       setShowQuizButton(vocabList.length >= 20)
     }
   };
+
+  const filterByCustomTags = function(tags: string[]){
+    //TODO
+  }
 
   const getLangList = async function () {
     let _userId = userId;
@@ -117,6 +123,15 @@ const Vocab = (item: any) => {
 
   const closeTagModal = () => {
     setTagModalShow(false);
+    getUserInfo()
+  }
+
+  const openTagFilterModal = (tags: string[]) => {
+    setTagFilterModalShow(true);
+  }
+
+  const closeTagFilterModal = () => {
+    setTagFilterModalShow(false);
   }
 
   const logout = () => {
@@ -206,7 +221,7 @@ const Vocab = (item: any) => {
               Tags
             </button>
             {
-              (selectedLangCode && <FilterButton onClickItem={getVocabList}></FilterButton>)
+              (selectedLangCode && <FilterButton onClickItem={getVocabList} OpenTagFilterModal={openTagFilterModal}></FilterButton>)
             }
             <Container id="vocab-cards" fluid>{cards}</Container>
           </Container>
@@ -239,6 +254,7 @@ const Vocab = (item: any) => {
           <Container fluid>
             {
               user &&
+              <>
               <TagModal
                 show={tagModalShow}
                 closeTagModal={closeTagModal}
@@ -247,6 +263,15 @@ const Vocab = (item: any) => {
                 setUpdateView={setUpdateLangView}
                 tags={user?.tags || ["test1", "test2"]}
               />
+              <TagFilterModal
+                show={tagFilterModalShow}
+                closeTagModal={closeTagFilterModal}
+                userId={userId}
+                updateView={updateLangView}
+                setUpdateView={setUpdateLangView}
+                tags={user?.tags || ["test1", "test2"]}
+              />
+              </>
             }
 
           </Container>

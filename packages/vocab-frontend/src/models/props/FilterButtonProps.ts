@@ -1,3 +1,4 @@
 export type FilterButtonProps = {
-    onClickItem : Function
+    onClickItem : Function,
+    OpenTagFilterModal : Function
 }
