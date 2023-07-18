@@ -2,6 +2,7 @@
 ### Project Description
 A 2.0 version of my original Vocab Notebook App project, rewritten using Typescript and integatred into a monorepo. This app allow user to jot down new vocabs they learn when learning a foreign language. User can provide a sample sentence as well as translation when they create a new vocab entry. When user have more then 20 vocab entries in their vocab bank, a quiz feature is unlocked that user can take anytime. The quiz will draw from user's vocab bank and generate multiple-choice question based on it.
 ***
+![Screenshot](https://github.com/hyleungtommy/vocab-app-2/blob/b4f94b0fe075d32f7bb4570b637e6fd196adef1b/Screenshot.png)
 ### Tech stack
 * Typescript
 * React with NextJS
