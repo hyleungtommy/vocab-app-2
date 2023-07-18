@@ -5,68 +5,63 @@ import * as AxiosHelper from '@/helpers/AxiosHelper';
 import { TagsModalProps } from "@/models/props/TagsModelProps";
 
 const TagFilterModal = (props: TagsModalProps) => {
-    const [newLangList, setNewLangList] = useState<JSX.Element[]>([])
-    const [newTag, setNewTag] = useState<string>("")
-    const [updateView, setUpdteView] = useState<number>(0)
     const [tempList, setTempList] = useState<string[]>(props.tags)
-    useEffect(() => {
-        loadTags();
-    }, [updateView])
+    const [checkboxList, setCheckboxList] = useState<boolean[]>([])
+
+    const handleOnChange = (i : number)=>{
+        const localCheckboxList = [...checkboxList]
+        localCheckboxList[i] = !localCheckboxList[i]
+        setCheckboxList(localCheckboxList)
+    }
 
     const loadTags = () => {
-        const modalItemList: JSX.Element[] = [];
-        var idx = 0;
-        for (var item in tempList) {
-            let i = idx
-            modalItemList.push(
-                <>
-                    <p>
-                        {tempList[idx]}
-                        &nbsp;
-                        <input type="checkbox"></input>
-                    </p>
-                   
-                </>
-            )
-            idx++;
-        }
-
-        setNewLangList(modalItemList)
+        setTempList(props.tags)
+        setCheckboxList(new Array(props.tags.length).fill(false))
     }
 
-    const addNewTag = () => {
-        tempList.push(newTag)
-        setNewTag("")
-        setUpdteView(updateView + 1)
-    }
-
-    const removeTag = (idx: number) => {
-        tempList.splice(idx, 1)
-        setUpdteView(updateView + 1)
+    const selectAllTags = ()=>{
+        const localCheckboxList = new Array(checkboxList.length).fill(true)
+        setCheckboxList(localCheckboxList)
     }
 
     return (
         <Modal
             show={props.show}
             onHide={() => {
-                props.closeTagModal()
+                let checkedTags: string[] = []
+                let idx = 0
+                for(let checkbox of checkboxList){
+                    if(checkbox){
+                        checkedTags.push(tempList[idx])
+                    }
+                    idx ++
+                }
+                props.closeTagModal(checkedTags)
             }
             }
             onEntered={() => loadTags()}>
             <Modal.Header>Only show these tags : </Modal.Header>
             <Modal.Body>
-                {newLangList}
-
+                
+                {
+                    checkboxList.map((checkbox,idx)=>(
+                        <p>
+                        <input
+                            type="checkbox"
+                            checked={checkbox}
+                            onChange={() => handleOnChange(idx)}
+                        />
+                        &nbsp;
+                        {tempList[idx]}
+                        </p>
+                    ))
+                }
             </Modal.Body>
             <Modal.Footer>
                 <button
                     type="button"
                     className="btn btn-primary blue"
-                    onClick={() => {
-                        if (newTag.length > 0)
-                            addNewTag()
-                    }
-                    }
+                    onClick={selectAllTags}
                 >
                     Select All
                 </button>

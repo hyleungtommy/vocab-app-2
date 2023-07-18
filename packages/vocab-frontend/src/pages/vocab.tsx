@@ -23,6 +23,7 @@ const Vocab = (item: any) => {
 
   const quizButton = useRef(null)
   const [vocabs, setVocabs] = useState<Vocab[]>([]);
+  const [filteredVocabs, setFilteredVocabs] = useState<Vocab[]>([])
   const [show, setShow] = useState<boolean>(false);
   const [langModalShow, setLangModalShow] = useState<boolean>(false);
   const [modalMode, setModalMode] = useState<string>("New");
@@ -65,13 +66,21 @@ const Vocab = (item: any) => {
     if (langList.length > 0 && userId !== "") {
       const vocabList: Vocab[] = await AxiosHelper.getVocabListByType(userId, selectedLangCode, type);
       setVocabs(vocabList);
+      setFilteredVocabs(vocabList)
       setSelectedLangType(type);
       setShowQuizButton(vocabList.length >= 20)
     }
   };
 
   const filterByCustomTags = function(tags: string[]){
-    //TODO
+    let localFilteredList = vocabs.filter((v)=>{
+      let matched = false
+      v.tags.forEach((t)=>{
+        if(tags.includes(t)) matched = true
+      })
+      return matched
+    })
+    setFilteredVocabs(localFilteredList)
   }
 
   const getLangList = async function () {
@@ -89,6 +98,7 @@ const Vocab = (item: any) => {
         if (langList.length == 0) {// on first load
           const vocabList = await AxiosHelper.getVocabListByType(_userId, _langList[0].code, "");
           setVocabs(vocabList);
+          setFilteredVocabs(vocabList);
           setShowQuizButton(vocabList.length >= 20)
         }
       }
@@ -130,8 +140,9 @@ const Vocab = (item: any) => {
     setTagFilterModalShow(true);
   }
 
-  const closeTagFilterModal = () => {
+  const closeTagFilterModal = (checkedTags: string[]) => {
     setTagFilterModalShow(false);
+    filterByCustomTags(checkedTags)
   }
 
   const logout = () => {
@@ -159,7 +170,7 @@ const Vocab = (item: any) => {
   //store all display vocab cards
   //todo: update number of card when user scroll down
   var cards: JSX.Element[] = [];
-  vocabs.map((vocab: Vocab) => {
+  filteredVocabs.map((vocab: Vocab) => {
     cards.push(
       <VocabCard
         vocab={vocab}
